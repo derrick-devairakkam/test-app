@@ -1,14 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TodoForm from './TodoForm';
 import Todo from './Todo';
 
 function TodoList() {
   const [todos, setTodos] = useState([]);
 
-  const addTodo = todo => {
+  useEffect(() => {
+    let temp = [];
+    fetch('/api/tasks')
+    .then((data) => data.json())
+    .then((data) => {
+      data.forEach((e) => {
+        // console.log('e', e);
+        temp.push({id: e._id, text: e.taskName});
+      })
+      setTodos(temp);
+    });
+  }, []);
+
+  const addTodo = async (todo) => {
     if (!todo.text || /^\s*$/.test(todo.text)) {
       return;
     }
+
+    await fetch('/api/tasks', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(todo)
+    });
 
     const newTodos = [todo, ...todos];
 
@@ -21,24 +42,43 @@ function TodoList() {
       return;
     }
 
+    const id = todoId;
+    const taskName = newValue.text;
+
+    fetch('/api/tasks', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id, taskName })
+    })
+    
     setTodos(prev => prev.map(item => (item.id === todoId ? newValue : item)));
   };
 
-  const removeTodo = id => {
-    const removedArr = [...todos].filter(todo => todo.id !== id);
+  const removeTodo = async (id) => {
 
+    await fetch('/api/tasks', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id })
+      
+    })
+    const removedArr = [...todos].filter(todo => todo.id !== id);
     setTodos(removedArr);
   };
 
-  const completeTodo = id => {
-    let updatedTodos = todos.map(todo => {
-      if (todo.id === id) {
-        todo.isComplete = !todo.isComplete;
-      }
-      return todo;
-    });
-    setTodos(updatedTodos);
-  };
+  // const completeTodo = id => {
+  //   let updatedTodos = todos.map(todo => {
+  //     if (todo.id === id) {
+  //       todo.isComplete = !todo.isComplete;
+  //     }
+  //     return todo;
+  //   });
+  //   setTodos(updatedTodos);
+  // };
 
   return (
     <>
@@ -46,7 +86,7 @@ function TodoList() {
       <TodoForm onSubmit={addTodo} />
       <Todo
         todos={todos}
-        completeTodo={completeTodo}
+        // completeTodo={completeTodo}
         removeTodo={removeTodo}
         updateTodo={updateTodo}
       />

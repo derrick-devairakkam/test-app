@@ -25,7 +25,10 @@ userController.verifyUser = async (req, res, next) => {
   try {
     const user = await models.User.findOne({username: username, password: password})
     if (user) {
+      // console.log('user', user);
+      // console.log('user.id', user._id._id);
       res.locals.user_id = user._id;
+      // console.log('for tom -->', res.locals.user_id);
       return next();
     } else res.redirect('/signup');
   } catch (error) {

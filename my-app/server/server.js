@@ -1,38 +1,31 @@
 const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
-// const cors = require('cors');
-// const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
 const router = require('./routes/routes');
 const PORT = 3000;
-// const MongoDBStore = require('connect-mongodb-session')(session);
-// require('dotenv').config();
+const MongoStore = require('connect-mongo');
+require('dotenv').config();
 
 const app = express();
 
-// app.use(cors());
-app.use(cookieParser());
-
-const mongoURI = 'mongodb+srv://thomaskpappas:8xieuuLjy7jmlGEc@cluster0.yk1ahpq.mongodb.net/?retryWrites=true&w=majority';
-const encodedURI = encodeURIComponent(mongoURI);
-
-mongoose.connect(encodedURI, { useUnifiedTopology: true , useNewUrlParser: true });
+mongoose.connect(process.env.MONGO_URI, { useUnifiedTopology: true , useNewUrlParser: true });
 mongoose.connection.once('open', () => {
   console.log(`Connected to DB son! (They don't know me)`);
 });
 
-// mongoose.connect('mongodb+srv://chuckfranco:EeyAv93wlQ1Zivw4@osp-to-do.vijc7fi.mongodb.net/?retryWrites=true&w=majority', { useUnifiedTopology: true , useNewUrlParser: true } );
-// mongoose.connection.once('open', () => {
-//   console.log('Connected to DB son!');
-// });
-
-// mongoose.connect('mongodb+srv://thomaskpappas:8xieuuLjy7jmlGEc@cluster0.yk1ahpq.mongodb.net/', { useUnifiedTopology: true , useNewUrlParser: true } );
-
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+app.use(session({
+  secret: 'your-secret-key', // Change this to a random secret key
+  resave: false,
+  saveUninitialized: true,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI, // MongoDB connection URL
+  }),
+}));
 
 // const store = new MongoDBStore({
 //     uri: 'mongodb+srv://thomaskpappas:8xieuuLjy7jmlGEc@cluster0.yk1ahpq.mongodb.net/?retryWrites=true&w=majority',
@@ -48,12 +41,6 @@ app.use(express.urlencoded({ extended: true }));
 //     user_id: "",
 //     authentication: false
 //   };
-
-// app.use(session(sessionConfig))
-
-// serve static pages
-// app.use('/client', express.static(path.resolve(__dirname, '../src')));
-// app.use('/client', express.static(path.resolve(__dirname, '../public')));
 
 // use all routes in routes folder
 app.use('/api', router);
@@ -76,5 +63,3 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });
-
-module.exports = app;
