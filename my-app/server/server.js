@@ -2,11 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const router = require('./routes/routes');
-const PORT = 3000;
 const MongoStore = require('connect-mongo');
 require('dotenv').config();
 
+const router = require('./routes/routes');
+
+const PORT = 3000;
 const app = express();
 
 mongoose.connect(process.env.MONGO_URI, { useUnifiedTopology: true , useNewUrlParser: true });
@@ -19,28 +20,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(session({
-  secret: 'your-secret-key', // Change this to a random secret key
+  secret: 'secret',
   resave: false,
   saveUninitialized: true,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI, // MongoDB connection URL
+    mongoUrl: process.env.MONGO_URI,
   }),
 }));
-
-// const store = new MongoDBStore({
-//     uri: 'mongodb+srv://thomaskpappas:8xieuuLjy7jmlGEc@cluster0.yk1ahpq.mongodb.net/?retryWrites=true&w=majority',
-//     collection: 'sessions' // Name of the collection where sessions will be stored
-//   });
-  
-//   const sessionConfig = {
-//     store,
-//     secret: 'secret',
-//     saveUninitialized: false,
-//     resave: false,  
-//     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
-//     user_id: "",
-//     authentication: false
-//   };
 
 // use all routes in routes folder
 app.use('/api', router);

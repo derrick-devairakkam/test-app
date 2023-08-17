@@ -11,7 +11,6 @@ function TodoList() {
     .then((data) => data.json())
     .then((data) => {
       data.forEach((e) => {
-        // console.log('e', e);
         temp.push({id: e._id, text: e.taskName});
       })
       setTodos(temp);
@@ -34,7 +33,6 @@ function TodoList() {
     const newTodos = [todo, ...todos];
 
     setTodos(newTodos);
-    console.log(...todos);
   };
 
   const updateTodo = (todoId, newValue) => {
@@ -66,6 +64,7 @@ function TodoList() {
       body: JSON.stringify({ id })
       
     })
+    
     const removedArr = [...todos].filter(todo => todo.id !== id);
     setTodos(removedArr);
   };

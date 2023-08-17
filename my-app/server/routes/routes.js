@@ -1,5 +1,5 @@
 const express = require('express');
-// const path = require('path');
+
 const userController = require('../controllers/userController');
 const cookieController = require('../controllers/cookieController');
 const sessionController = require('../controllers/sessionController');
@@ -7,59 +7,43 @@ const taskController = require('../controllers/taskController');
 
 const router = express.Router();
 
-// Signup route handler
+// route handler for signup
 router.post('/signup', userController.createUser, (req, res) => {
-    
-    console.log("Post request for /signup")
+    console.log('/signup POST request has fired')
     res.sendStatus(200);
 });
 
-// login router handler 
-router.post('/login', userController.verifyUser, sessionController.createSession, 
-(req, res) => {
-  console.log("Post request for /login")
-  console.log('req.session', req.session);
+// route handler for login 
+router.post('/login', userController.verifyUser, sessionController.createSession, (req, res) => {
+  console.log('/login POST request has fired')
   res.status(200).json(res.locals.user_id);
 });
 
-// route handler to get recipes for recipe page
+// route handler to get tasks for homepage
 router.get('/tasks', taskController.getTasks, (req, res) => {
     console.log('/tasks GET request for taskController.getTasks has fired');
     res.status(200).json(res.locals.tasks);
   });
 
-// route handler to post recipes and return posting to render on frontend
+// route handler to post tasks and return tasks for frontend rerender
 router.post('/tasks', taskController.setTask, (req, res) => {
     console.log('/tasks POST request for taskControler.setTask has fired');
     res.status(200).json(res.locals.newTask);
   });
 
+// route handler for updating tasks
 router.put('/tasks', taskController.updateTask, (req, res) => {
   console.log('/put fired lil bitch');
   res.sendStatus(200);
 });
 
-// route handler to delete recipes
+// route handler to delete tasks
 router.delete('/tasks', taskController.deleteTask, (req, res) => {
-  console.log('/tasks DELETE request for *** has fired');
+  console.log('/tasks DELETE request for taskController.deleteTask has fired');
   res.sendStatus(200);
 });
 
-// // route handler to retrieve user recipes for the homepage and parse data for randomized week with additional parameters 
-// router.post('/homepage', (req, res) => {
-//     console.log('/homepage POST request for recipeController.getRecipes, recipeController.getIngredients & gernationController.handleUserData has fired');
-//     res.status(200).json(res.locals);
-// });
-
-// // route handler to render recipe generation if user already generated a set
-// router.get('/homepage', sessionController.isLoggedIn, (req, res) => {
-//   console.log('/homepage GET request for generationController.fetchCreatedData has fired');
-//   res.status(200).json(res.locals.data);
-// });
-
-//userController -> verifyUser, setSSIDcookie, start session
-
-//logout user
+// route handler to logout user
 router.get('/logout', cookieController.clearCookie, (req, res) => {
   console.log('/logout route hit');
   req.session.destroy();

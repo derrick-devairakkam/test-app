@@ -13,23 +13,6 @@ function TodoForm(props) {
         setInput(element.target.value);
     };
 
-/** try {
- * const response = await fetch('/api/tasks', {
- * method: 'POST',
- * HEADERS: {
- *  'Content-Type': 'application/json'
- * },
- * body: JSON.stringify(formData)
- * });
- * 
- * const data = await response.json();
- * 
- * if (resonpse.ok) {
- * 
- * setInput({
- *  })}
- * }
- */
     const handleSubmit = element => {
         element.preventDefault();
 

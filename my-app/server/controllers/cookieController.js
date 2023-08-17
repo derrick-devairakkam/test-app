@@ -2,7 +2,6 @@ const cookieController = {};
 
 cookieController.setCookie = (req, res, next) => {
   const user_id = res.locals.user_id;
-  console.log('user_id: ', user_id);
   res.cookie('user_id', user_id);
   return next();
 };
