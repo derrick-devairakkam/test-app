@@ -32,13 +32,17 @@ app.use(session({
 
 // server static files
 app.use(express.static(path.resolve(__dirname, '../dist')));
+
 // use all routes in routes folder
 app.use('/api', router);
 
-app.get('/', (req, res) => {
-  return res.status(200).sendFile(path.join(__dirname, '../src/index.html'));
-});
+// app.get('/', (req, res) => {
+//   return res.status(200).sendFile(path.join(__dirname, '../dist/index.html'));
+// });
 
+app.get('*', (req, res) => {
+  return res.sendFile(path.join(__dirname,'../dist/index.html'));
+})
 
 // catch-all route handler for any requests to an unknown route
 app.use((req, res) => res.status(404).send('404 page not found'));
